@@ -1,0 +1,41 @@
+---
+config:
+  theme: default
+---
+sequenceDiagram
+    title:  Team 38 / CS6310 / Assignment 1: Y attacks, X defends
+
+actor BattleManager as BattleManager
+  actor PokemonY as PokemonY
+  actor PokemonX as PokemonX
+  participant AttackSkill as AttackSkill
+  participant DefenseSkill as DefenseSkill
+  participant Battle as Battle
+  participant Random as Random
+
+  BattleManager ->>+ Battle: processTurn()
+  Battle ->>+ PokemonY: chooseAttack()
+  PokemonY ->> PokemonY: sortSkillsByDamage(attackSkills)
+  PokemonY ->> PokemonY: chooseRandomSkill(attackSkills)
+  PokemonY -->> AttackSkill: selectedSkill
+  PokemonY -->>- Battle: selectedSkill
+  Battle ->>+ PokemonX: chooseDefense()
+  
+  alt Defense selected
+    PokemonX ->> PokemonX: sortSkillsByDamage(defenseSkills)
+    PokemonX ->> PokemonX: chooseRandomSkill(defenseSkills)
+    PokemonX -->> DefenseSkill: selectedSkill
+    PokemonX -->> Battle: selectedSkill
+    Battle ->> DefenseSkill: apply(attackDamage)
+    DefenseSkill -->> Battle: reducedDamage
+    Battle ->> PokemonX: applyDamage(reducedDamage)
+  else No defense selected
+    Battle ->> PokemonX: applyDamage(attackDamage)
+  end
+  
+  PokemonX ->>- PokemonX: currentHP -= damage (rounded up)
+  Battle ->> Battle: logEvent("[PokemonY.name] attacked with [Skill.name] for [damage] damage, PokemonX.name defended with [Skill.name] reducing damage to [reduced damage]")
+
+  alt if X faints
+    Battle->>Battle: setWinner(Y)
+  end

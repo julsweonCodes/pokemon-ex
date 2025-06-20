@@ -1,0 +1,6 @@
+.navBarLink {
+  transition: transorm 0.5s ease-in-out;
+}
+.navBarLink:hover {
+  transform: scale(1.2);
+}

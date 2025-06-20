@@ -1,0 +1,46 @@
+{
+    "name": "pokemon",
+    "type": "object",
+    "required": ["name", "type", "level", "hitPoints"],
+    "properties": {
+      "id":{
+        "type":"string" 
+      },
+      "name": {
+        "type": "string",
+        "minLength": 3
+      },
+      "type": {
+        "type": "string",
+        "enum": ["NORMAL", "FIRE", "WATER", "GRASS", "ROCK", "FIGHTING", "PSYCHIC", "GHOST", "BUG", "POISON", "FLYING", "ELECTRIC", "GROUND", "ICE", "DRAGON", "DARK", "STEEL", "FAIRY", "STELLAR"]
+      },
+      "level": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100
+      },
+      "hitPoints": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 255
+      },
+      "battlesWon": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "battlesLost": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "image": {
+        "type": "string"
+      },
+      "hpSkills": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "additionalProperties": false
+    }

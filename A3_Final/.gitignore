@@ -1,0 +1,15 @@
+.postgres_data/
+shared/prisma/migrations
+./node_modules
+./dist
+./.idea/** */
+ .DS_Store
+node_modules/
+**prisma/generated/**.js
+**prisma/generated/**.d.ts
+**prisma/generated/**.ts
+**prisma/generated/**.mjs
+**prisma/generated/**.mts
+**prisma/generated/**.cjs
+**prisma/generated/**.cjs
+**package.lock.json**

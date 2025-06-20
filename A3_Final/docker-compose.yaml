@@ -1,0 +1,49 @@
+services:
+  web:
+    build: ./web/.
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:p0k3m0n6310@database:5432/team38?schema=public
+    networks:
+      - pokemon-network
+    depends_on:
+      database:
+        condition: service_healthy
+  database:
+    image: postgres:15
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: p0k3m0n6310
+      POSTGRES_DB: team38
+    volumes:
+      - ./.postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d team38"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pokemon-network
+
+  prisma-migrator-job:
+    build:
+      context: .
+      dockerfile: prisma/Dockerfile
+    volumes:
+      - ./shared/prisma:/prisma
+    environment:
+      DATABASE_URL: postgresql://postgres:p0k3m0n6310@database:5432/team38?schema=public
+    command: >
+      prisma migrate dev --name init --schema=/prisma/schema.prisma --skip-generate
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - pokemon-network
+    restart: "no"
+networks:
+  pokemon-network:
+    driver: bridge

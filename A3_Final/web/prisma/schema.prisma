@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+  binaryTargets = ["linux-musl-openssl-3.0.x","windows","linux-musl-arm64-openssl-3.0.x","darwin-arm64"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pokemon {
+  id              Int      @id @default(autoincrement())
+  instance_name   String?  @unique @db.VarChar(255)
+  pokemon_name    String   @db.VarChar(100)
+  pokemon_type    String   @db.VarChar(50)
+  level           Int      @default(1)
+  hit_points      Int      @default(100)
+  max_hit_points  Int      @default(100)
+  battles_won     Int      @default(0)
+  battles_lost    Int      @default(0)
+  image_url       String?  @db.VarChar(255)
+  skills          Int[]    @default([])
+  is_archived     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  battlesAsP1     PokemonBattle[] @relation("Pokemon1")
+  battlesAsP2     PokemonBattle[] @relation("Pokemon2")
+  battlesWon      PokemonBattle[] @relation("Winner")
+}
+
+model PokemonBattle {
+  id              Int      @id @default(autoincrement())
+  pokemon_1_id    Int
+  pokemon_2_id    Int
+  pokemon_1_seed  Int
+  pokemon_2_seed  Int
+  battle_date     DateTime @default(now())
+  winner_pokemon_id Int?
+  battle_duration String?
+  battle_log      Json?    @db.JsonB
+  tournamentId    Int?
+  tournament      Tournament? @relation(fields: [tournamentId], references: [id])
+  pokemon1        Pokemon @relation("Pokemon1", fields: [pokemon_1_id], references: [id])
+  pokemon2        Pokemon @relation("Pokemon2", fields: [pokemon_2_id], references: [id])
+  winner          Pokemon? @relation("Winner", fields: [winner_pokemon_id], references: [id])
+}
+
+model Tournament {
+  id          Int      @id @default(autoincrement())
+  name        String
+  venue       String   @default("Default Arena")
+  seed        Int      @default(0)
+  createdAt   DateTime @default(now())
+  battles     PokemonBattle[]
+}
+
+model PokemonSkill {
+  id           Int     @id @default(autoincrement())
+  is_attack    Boolean
+  name         String  @db.VarChar(200)
+  pokemon_type String  @db.VarChar(200)
+  damage       Int
+}
+
+model ArchivedBattles {
+  id                Int      @id @default(autoincrement())
+  battle_history_id Int
+  archive_date      DateTime @default(now())
+}
+
+model PokemonBattleHistory {
+  id                Int      @id @default(autoincrement())
+  battle_id         Int
+  pokemon_1_id      Int
+  pokemon_2_id      Int
+  pokemon_1_seed    Int
+  pokemon_2_seed    Int
+  battle_date       DateTime
+  winner_pokemon_id Int
+  battle_duration   Int
+  battle_log        Json     @db.JsonB
+} 

@@ -1,0 +1,12 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "@typescript-eslint/*": "off",
+    "react/*": "off",
+    "import/*": "off",
+    "jsx-a11y/*": "off",
+    "@next/*": "off",
+    "*": "off"
+  },
+  "ignorePatterns": ["*"]
+} 

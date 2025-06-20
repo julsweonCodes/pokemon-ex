@@ -1,0 +1,57 @@
+---
+config:
+  theme: default
+title: Team 38 / CS6310 / Assignment 1
+---
+sequenceDiagram
+    title: Team 38 / CS6310 / Assignment 1: X attacks, Y does not defend
+
+    actor BattleManager
+    participant PokemonFactory
+    actor PokemonX
+    actor PokemonY
+    participant AttackSkill
+    participant Battle
+    participant Random
+
+    BattleManager->>PokemonFactory: createPokemon(Type)
+    activate PokemonFactory
+    PokemonFactory->>PokemonX: new Pokemon(Type)
+    activate PokemonX
+    PokemonX-->>PokemonFactory: instance
+    deactivate PokemonX
+    PokemonFactory-->>BattleManager: PokemonX
+    deactivate PokemonFactory
+
+    BattleManager->>PokemonFactory: createPokemon(Type)
+    activate PokemonFactory
+    PokemonFactory->>PokemonY: new Pokemon(Type)
+    activate PokemonY
+    PokemonY-->>PokemonFactory: instance
+    deactivate PokemonY
+    PokemonFactory-->>BattleManager: PokemonY
+    deactivate PokemonFactory
+
+    BattleManager->>Battle: startBattle(PokemonX, PokemonY)
+    activate Battle
+    Battle->>Battle: logEvent("Battle started")
+    Random ->> PokemonX: SetSeed()
+    Random ->> PokemonY: SetSeed(SeedX+1)
+    loop Until battle ends
+        Battle->>PokemonX: chooseAttack()
+        activate PokemonX
+        PokemonX->>PokemonX: sortSkillsByDamage(attackSkills)
+        PokemonX->>PokemonX: chooseRandomSkill(attackSkills)
+        PokemonX-->>AttackSkill: selectedSkill
+
+        AttackSkill->>Battle: apply(PokemonY, selectedSkill.damage)
+        Battle->>PokemonY: applyDamage(damage)
+        activate PokemonY
+        PokemonY->>PokemonY: currentHP -= damage (rounded up)
+        deactivate PokemonY
+
+        Battle->>Battle: logEvent("X used [Skill] for [damage] damage")
+        alt if Y faints
+            Battle->>Battle: setWinner(X)
+        end
+    end

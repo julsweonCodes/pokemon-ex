@@ -1,0 +1,66 @@
+---
+config:
+  theme: default
+title: 'Team 38 / CS6310 / Assignment 1: Class Diagram'
+---
+classDiagram
+direction LR
+
+class BattleManager {
+    -Battle currentBattle
+    +seeds : Dictionary<string, int[]>
+    +startBattle(Pokemon attacker, Pokemon defender)
+}
+
+class Battle {
+    -Pokemon attacker
+    -Pokemon defender
+    -battleLog : List
+    +startBattle(Pokemon attacker, Pokemon defender)
+    +processTurn()
+    +logEvent(String event)
+}
+
+class Pokemon {
+    +String name
+    -int maxHitPoints
+    -int currentHitPoints
+    -PokemonType type
+    -skills : List
+    -movesPerformed : List
+    -previousSkill : Skill
+    +int seed
+    +chooseRandomSkill(List skills) Skill
+    +sortSkillsByDamage(List skills) void
+    +reset()
+    +initialize()
+    +chooseAttack() Skill
+    +chooseDefense() Skill
+    +applyDamage(int baseDamage)
+    +restoreHP()
+    +logMove(String event)
+}
+
+class Skill {
+    +String name
+    +int damageLevel
+    +SkillType type
+    +apply() void
+    +getSkillDetails() String
+}
+
+class PokemonType {
+    <<enumeration>>
+    NORMAL, FIRE, WATER, ELECTRIC, GRASS, ICE, FIGHTING, POISON, GROUND,
+    FLYING, PSYCHIC, BUG, ROCK, GHOST, DRAGON, DARK, STEEL, FAIRY
+}
+
+class SkillType {
+    <<enumeration>>
+    ATTACK=1, DEFENSE=2
+}
+
+BattleManager --> Battle : manages
+Pokemon *-- Skill : has
+Pokemon o-- PokemonType : has
+Skill o-- SkillType : has
